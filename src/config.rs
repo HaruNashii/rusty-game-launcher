@@ -21,7 +21,6 @@ pub fn read_config_file() -> ConfigFileData
     let user_name = String::from_utf8(stdout).expect("Stdout was not valid UTF-8").replace("\n", "");
 
 
-
     let mut all_config_file_data = Vec::new();
     let mut converted_config_file_data = Vec::new();
     let options = vec!
@@ -33,8 +32,8 @@ pub fn read_config_file() -> ConfigFileData
     // doesn't have one setted up
     let default_values = vec!
     [
-        "path_to_scan:/usr/share/applications /home/haru/.local/share/applications",
-        "window_size:800 600"
+        format!("path_to_scan:/usr/share/applications /home/{}/.local/share/applications", user_name),
+        "window_size:800 600".to_string(),
     ];
 
 
@@ -81,6 +80,7 @@ pub fn read_config_file() -> ConfigFileData
     }
 
     
+    // convert strings to u32 to suit the struct field
     for string_to_parse in &all_config_file_data[1]
     {
         let converted_number: u32 = string_to_parse.parse().unwrap();
