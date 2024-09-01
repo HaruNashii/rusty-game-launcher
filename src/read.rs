@@ -9,10 +9,10 @@ pub struct DesktopFile
     pub desktop_file_exec: String,
 }
 
-pub fn read_desktop_files(received_path: Vec<&str>) -> Vec<DesktopFile>
+pub fn read_desktop_files(received_path: Vec<String>) -> Vec<DesktopFile>
 {
     let mut files = Vec::new();
-    for path_to_read in received_path
+    for path_to_read in &received_path
     {
         if !Path::new(path_to_read).exists()
         {
