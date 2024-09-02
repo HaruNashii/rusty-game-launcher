@@ -11,6 +11,7 @@ pub struct ConfigFileData
     pub use_gamemode: bool,
     pub use_gamescope: bool,
     pub gamescope_flags: String,
+    pub object_per_line: i32,
     pub text_position: Vec<i32>,
     pub image_position: Vec<i32>,
     pub distance_between_texts: Vec<i32>,
@@ -61,6 +62,7 @@ pub fn read_config_file() -> ConfigFileData
         "use_gamemode:",
         "use_gamescope:",
         "gamescope_flags:",
+        "object_per_line:",
         "text_position:",
         "image_position:",
         "distance_between_texts:",
@@ -75,6 +77,7 @@ pub fn read_config_file() -> ConfigFileData
         "use_gamemode:false".to_string(),
         "use_gamescope:true".to_string(),
         "gamescope_flags:--fullscreen".to_string(),
+        "object_per_line:3".to_string(),
         "text_position:28 215".to_string(),
         "image_position:25 115".to_string(),
         "distance_between_texts:250 250".to_string(),
@@ -118,8 +121,10 @@ pub fn read_config_file() -> ConfigFileData
         }
     }
 
-
     // convert strings to i32 to suit the struct field
+    let converted_to_i32_number_config_file_data: i32 = all_config_file_data_as_string_vectors[5][0].parse().unwrap();
+
+    // convert strings to a vector of i32 to suit the struct field
     for string_to_parse in all_config_file_data_as_string_vectors.iter().skip(5)
     {
         for string in string_to_parse
@@ -166,6 +171,7 @@ pub fn read_config_file() -> ConfigFileData
         use_gamemode: converted_to_bool_config_file_data[0],
         use_gamescope: converted_to_bool_config_file_data[1],
         gamescope_flags:  all_config_file_data_as_string_vectors[4][0].clone(),
+        object_per_line: converted_to_i32_number_config_file_data,
         text_position: vec![converted_to_i32_config_file_data[0], converted_to_i32_config_file_data[1]],
         image_position: vec![converted_to_i32_config_file_data[2], converted_to_i32_config_file_data[3]],
         distance_between_texts: vec![converted_to_i32_config_file_data[4], converted_to_i32_config_file_data[5]],

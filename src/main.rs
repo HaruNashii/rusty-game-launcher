@@ -5,7 +5,7 @@ use crate::
     read::read_desktop_files,
     config::read_config_file,
     window::{create_window, render_scene},
-    ui::{create_layout, fonts, images, OBJECT_PER_LINE},
+    ui::{create_layout, fonts, images},
     input_handler::handle_input,
     exec::exec_app,
 };
@@ -22,8 +22,8 @@ fn main()
     let config_file_data = read_config_file();
     let files = read_desktop_files(config_file_data.path_to_scan);
 
-    let fonts_objects = create_layout(vec![config_file_data.text_position[0], config_file_data.text_position[1], files.len() as i32, OBJECT_PER_LINE, config_file_data.distance_between_texts[0], config_file_data.distance_between_texts[1]]);
-    let images_objects = create_layout(vec![config_file_data.image_position[0], config_file_data.image_position[1], files.len() as i32, OBJECT_PER_LINE, config_file_data.distance_between_images[0], config_file_data.distance_between_images[1]]);
+    let fonts_objects = create_layout(vec![config_file_data.text_position[0], config_file_data.text_position[1], files.len() as i32, config_file_data.object_per_line, config_file_data.distance_between_texts[0], config_file_data.distance_between_texts[1]]);
+    let images_objects = create_layout(vec![config_file_data.image_position[0], config_file_data.image_position[1], files.len() as i32, config_file_data.object_per_line, config_file_data.distance_between_images[0], config_file_data.distance_between_images[1]]);
 
     let mut selected_option = 0;
 

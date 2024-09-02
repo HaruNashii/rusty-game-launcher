@@ -10,8 +10,6 @@ use crate::
     read::DesktopFile,
 };
 
-pub const OBJECT_PER_LINE: i32 = 3;
-
 pub fn create_layout(user_grid_data: Vec<i32>) -> Vec<Vec<i32>>
 {
         let mut all_objects = Vec::new();
