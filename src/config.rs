@@ -150,14 +150,14 @@ pub fn read_config_file() -> ConfigFileData
     // doesn't have one setted up
     let default_values = vec!
     [
-        format!("path_to_scan:/usr/share/applications /home/{}/.local/share/applications", user_name),
+        format!("path_to_scan:/usr/share/applications /var/lib/flatpak/exports/share/applications /home/{}/.local/share/flatpak/exports/share/applications /home/{}/.local/share/applications", user_name, user_name),
         "window_size:800 600".to_string(),
-        "use_gamemode:false".to_string(),
-        "use_gamescope:true".to_string(),
+        "use_gamemode:true".to_string(),
+        "use_gamescope:false".to_string(),
         "gamescope_flags:--fullscreen".to_string(),
         "object_per_line:3".to_string(),
-        "text_position:28 215".to_string(),
-        "image_position:25 115".to_string(),
+        "text_position:78 185".to_string(),
+        "image_position:75 70".to_string(),
         "distance_between_texts:250 250".to_string(),
         "distance_between_images:250 250".to_string(),
         "background_color:30 30 40".to_string(),
@@ -207,13 +207,22 @@ pub fn read_config_file() -> ConfigFileData
 
     // verify if the directory informed in the config file exists 
     // if don't stop the app and print one error message
-    for path_to_scan_from_user in &all_config_file_data_as_string_vectors[0]
+    let mut remove_list = Vec::new();
+    for (index, path_to_scan_from_user) in all_config_file_data_as_string_vectors[0].iter().enumerate()
     {
         if !Path::new(&path_to_scan_from_user).exists()
         {
-            panic!("\n THE PATH DESCRIBE 'path_to_scan' IN THE CONFIG FILE {} \n DOESN'T EXIST!! \n", &full_path_of_config_file);
+            println!("\n The Path '{}' Describe In 'path_to_scan' On The Config File '{}' \n Doesn't Exist! \n", path_to_scan_from_user, &full_path_of_config_file);
+            remove_list.push(index);
         };
     };
+    if !remove_list.is_empty() 
+    {
+        for index in remove_list
+        {
+            all_config_file_data_as_string_vectors.remove(index);
+        }
+    }
 
     ConfigFileData
     {

@@ -4,7 +4,6 @@ use std::io::{BufReader, BufRead};
 use std::path::Path;
 use std::process::Command;
 
-#[derive(Debug)]
 pub struct DesktopFile
 {
     pub desktop_file_name: String,
@@ -56,6 +55,7 @@ pub fn read_desktop_files(received_path: Vec<String>) -> Vec<DesktopFile>
         // if YES return the exec argument line and the file name
         let mut file_exec = String::new();
         let mut file_image = String::new();
+        let mut file_name = String::new();
         for name in files_with_game_category_name
         {
             let file = File::open( format!("{}/{}", path_to_read, name) ).unwrap();
@@ -64,7 +64,8 @@ pub fn read_desktop_files(received_path: Vec<String>) -> Vec<DesktopFile>
             for line in file_content.lines() 
             {
                 let line_content = line.unwrap();
-                if line_content.contains("Exec=") { file_exec = line_content.replace("Exec=", ""); continue; }
+                if line_content.contains("Name=") { file_name = line_content.replace("Name=", ""); continue;}
+                if line_content.contains("Exec=") { file_exec = line_content.replace("Exec=", ""); continue;}
                 if line_content.contains("Icon=")
                 {
                     file_image = line_content.replace("Icon=", "");
@@ -91,7 +92,7 @@ pub fn read_desktop_files(received_path: Vec<String>) -> Vec<DesktopFile>
                     };
                 }
             }
-            files.push( DesktopFile{desktop_file_name: name.to_string().replace(".desktop", "").replace('"', ""), desktop_file_exec: file_exec.replace('"', ""), desktop_file_image: file_image.replace('"', "")} );
+            files.push( DesktopFile{desktop_file_name: file_name.to_string().replace('"', ""), desktop_file_exec: file_exec.replace('"', ""), desktop_file_image: file_image.replace('"', "")} );
         }
     }
 
