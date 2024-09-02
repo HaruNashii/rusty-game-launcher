@@ -21,10 +21,11 @@ fn main()
 {
     let config_file_data = read_config_file();
     let files = read_desktop_files(config_file_data.path_to_scan);
-    let all_objects = create_layout(vec![125, 200, files.len() as i32, OBJECT_PER_LINE, 250, 250]);
+
+    let fonts_objects = create_layout(vec![config_file_data.text_position[0], config_file_data.text_position[1], files.len() as i32, OBJECT_PER_LINE, config_file_data.distance_between_texts[0], config_file_data.distance_between_texts[1]]);
+    let images_objects = create_layout(vec![config_file_data.image_position[0], config_file_data.image_position[1], files.len() as i32, OBJECT_PER_LINE, config_file_data.distance_between_images[0], config_file_data.distance_between_images[1]]);
 
     let mut selected_option = 0;
-    let mut clicked = false;
 
     let (texture_creator, mut canvas, mut event_pump) = create_window(config_file_data.window_size); 
     
@@ -32,9 +33,10 @@ fn main()
     {
         std::thread::sleep(Duration::from_millis(64));
 
-        let images = images(&all_objects, &files, &texture_creator);
-        let fonts = fonts(&all_objects, &files, &texture_creator);
-        (clicked, selected_option) = handle_input(selected_option, &all_objects, fonts.ui_rect_vector.len(), &mut event_pump);
+        let images = images(&images_objects, &files, &texture_creator);
+        let fonts = fonts(&fonts_objects, &files, &texture_creator);
+        let (clicked, option_returned) = handle_input(selected_option, &fonts_objects, fonts.ui_rect_vector.len(), &mut event_pump);
+        selected_option = option_returned;
         if clicked
         {
             let mut app_flag: u8 = 0;
@@ -44,6 +46,6 @@ fn main()
 
             exec_app(app_flag, &config_file_data.gamescope_flags, &files[selected_option].desktop_file_exec);
         };
-        render_scene(selected_option, &all_objects, &fonts, &images, &mut canvas);
+        render_scene(selected_option, &fonts_objects, &fonts, &images, &mut canvas);
     }
 }

@@ -74,7 +74,7 @@ pub struct Images<'a>
     pub rect_image_vector: Vec<Rect>,
 }
 
-pub fn images<'a>(all_objects: &Vec<Vec<i32>>, files: &'a Vec<DesktopFile>, texture_creator: &'a TextureCreator<WindowContext>) -> Images<'a>
+pub fn images<'a>(all_objects: &[Vec<i32>], files: &'a [DesktopFile], texture_creator: &'a TextureCreator<WindowContext>) -> Images<'a>
 {
     let mut image_vector = Vec::new();
     let mut rect_image_vector = Vec::new();
@@ -88,7 +88,7 @@ pub fn images<'a>(all_objects: &Vec<Vec<i32>>, files: &'a Vec<DesktopFile>, text
     {
         for (index, path) in path_of_images.iter().enumerate()
         {
-            let rect = Rect::new(all_objects[index][0] - 50, unsafe{CAMERA_Y_POSITION + all_objects[index][1] - 100}, 140, 100);
+            let rect = Rect::new(all_objects[index][0], unsafe{CAMERA_Y_POSITION + all_objects[index][1]}, 140, 100);
             rect_image_vector.push(rect);
 
             let texture = texture_creator.load_texture(path).unwrap();
@@ -111,14 +111,14 @@ pub struct Fonts<'a>
     pub ui_rect_vector: Vec<Rect>,
 }
 
-pub fn fonts<'a>(all_objects: &Vec<Vec<i32>>, files: &'a Vec<DesktopFile>, texture_creator: &'a TextureCreator<WindowContext>) -> Fonts<'a>
+pub fn fonts<'a>(all_objects: &[Vec<i32>], files: &'a [DesktopFile], texture_creator: &'a TextureCreator<WindowContext>) -> Fonts<'a>
 {
     let mut ui_vector = Vec::new();
     let mut ui_rect_vector = Vec::new();
            
     for (index, file) in files.iter().enumerate()
     {
-        let (ui_fonts_texture, ui_fonts_rect) = font_generator(texture_creator, None, file.desktop_file_name.clone(), 10, all_objects[index][0] - 50, unsafe{CAMERA_Y_POSITION} + all_objects[index][1] + 15);
+        let (ui_fonts_texture, ui_fonts_rect) = font_generator(texture_creator, None, file.desktop_file_name.clone(), 10, all_objects[index][0], unsafe{CAMERA_Y_POSITION} + all_objects[index][1]);
         ui_vector.push(ui_fonts_texture);
         ui_rect_vector.push(ui_fonts_rect);
     }

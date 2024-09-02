@@ -5,7 +5,7 @@ use std::process::exit;
 
 use crate::window::CAMERA_Y_POSITION;
 
-pub fn handle_input(mut selected_option: usize, all_objects: &Vec<Vec<i32>>, amount_limit: usize, event_pump: &mut sdl2::EventPump) -> (bool, usize)
+pub fn handle_input(mut selected_option: usize, all_objects: &[Vec<i32>], amount_limit: usize, event_pump: &mut sdl2::EventPump) -> (bool, usize)
 {
     unsafe{ CAMERA_Y_POSITION = 0; };
 
@@ -18,7 +18,7 @@ pub fn handle_input(mut selected_option: usize, all_objects: &Vec<Vec<i32>>, amo
             //===============================================================================================================//
             Event::KeyDown { keycode: Some(Keycode::Right), .. } => 
             {
-                    if selected_option as usize + 1 < amount_limit  
+                    if selected_option + 1 < amount_limit  
                     {
                         selected_option += 1;
                     };

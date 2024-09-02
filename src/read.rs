@@ -40,30 +40,21 @@ pub fn read_desktop_files(received_path: Vec<String>) -> Vec<DesktopFile>
         // check if the file has the Game category
         for name in &file_names
         {
-            match name.to_string().find("steam.desktop")
-            {
-                Some(..) => continue,
-                None => {},
-            };
-
+            if name.to_string().contains("steam.desktop") { continue };
+            
             let file = File::open( format!("{}/{}", path_to_read, name) ).unwrap();
             let file_content = BufReader::new(&file);
 
             for line in file_content.lines() 
             {
                 let line_content = line.unwrap();
-                match line_content.find("Game;")
-                {
-                    Some(..) => files_with_game_category_name.push(name),
-                    None => {},
-                }
+                if line_content.contains("Game") && line_content.contains("Categories=") && !line_content.contains("Discord") { files_with_game_category_name.push(name) }
             }
         }
 
         // check if the file has the exec argument
         // if YES return the exec argument line and the file name
         let mut file_exec = String::new();
-        let mut file_name = String::new();
         let mut file_image = String::new();
         for name in files_with_game_category_name
         {
@@ -72,64 +63,35 @@ pub fn read_desktop_files(received_path: Vec<String>) -> Vec<DesktopFile>
 
             for line in file_content.lines() 
             {
-                file_name = name.to_string().replace(".desktop", "");
                 let line_content = line.unwrap();
-                match line_content.find("Exec=")
+                if line_content.contains("Exec=") { file_exec = line_content.replace("Exec=", ""); }
+                if line_content.contains("Icon=")
                 {
-                    Some(..) => 
-                    {
-                        file_exec = line_content.replace("Exec=", "");
-                    }
-                    None => {},
-                }
+                    file_image = line_content.replace("Icon=", "");
 
-                match line_content.find("Icon=")
-                {
-                    Some(..) => 
+                    let size_of_image = vec!["512x512", "256x256", "128x128", "64x64", "48x48", "32x32", "24x24", "16x16"];
+                    'size_for_loop: for size in size_of_image
                     {
-                        file_image = line_content.replace("Icon=", "");
-
                         let desktop_file_image_check = vec!
                         [
-                            // HARD CODED BECAUSE I'M LAZY, I WILL CHANGE IT LATER
-                            format!("/var/lib/flatpak/exports/share/icons/hicolor/16x16/apps/{}.png", file_image),
-                            format!("/var/lib/flatpak/exports/share/icons/hicolor/24x24/apps/{}.png", file_image),
-                            format!("/var/lib/flatpak/exports/share/icons/hicolor/32x32/apps/{}.png", file_image),
-                            format!("/var/lib/flatpak/exports/share/icons/hicolor/48x48/apps/{}.png", file_image),
-                            format!("/var/lib/flatpak/exports/share/icons/hicolor/64x64/apps/{}.png", file_image),
-                            format!("/var/lib/flatpak/exports/share/icons/hicolor/128x128/apps/{}.png", file_image),
-                            format!("/var/lib/flatpak/exports/share/icons/hicolor/256x256/apps/{}.png", file_image),
-                            format!("/var/lib/flatpak/exports/share/icons/hicolor/512x512/apps/{}.png", file_image),
-
-                            format!("/home/{}/.local/share/flatpak/exports/share/icons/16x16/apps/{}.png", user_name, file_image),
-                            format!("/home/{}/.local/share/flatpak/exports/share/icons/24x24/apps/{}.png", user_name, file_image),
-                            format!("/home/{}/.local/share/flatpak/exports/share/icons/32x32/apps/{}.png", user_name, file_image),
-                            format!("/home/{}/.local/share/flatpak/exports/share/icons/48x48/apps/{}.png", user_name, file_image),
-                            format!("/home/{}/.local/share/flatpak/exports/share/icons/64x64/apps/{}.png", user_name, file_image),
-                            format!("/home/{}/.local/share/flatpak/exports/share/icons/128x128/apps/{}.png", user_name, file_image),
-                            format!("/home/{}/.local/share/flatpak/exports/share/icons/256x256/apps/{}.png", user_name, file_image),
-                            format!("/home/{}/.local/share/flatpak/exports/share/icons/512x512/apps/{}.png", user_name, file_image),
-
-                            format!("/home/{}/.local/share/icons/hicolor/16x16/apps/{}.png", user_name, file_image),
-                            format!("/home/{}/.local/share/icons/hicolor/24x24/apps/{}.png", user_name, file_image),
-                            format!("/home/{}/.local/share/icons/hicolor/32x32/apps/{}.png", user_name, file_image),
-                            format!("/home/{}/.local/share/icons/hicolor/48x48/apps/{}.png", user_name, file_image),
-                            format!("/home/{}/.local/share/icons/hicolor/64x64/apps/{}.png", user_name, file_image),
-                            format!("/home/{}/.local/share/icons/hicolor/128x128/apps/{}.png", user_name, file_image),
-                            format!("/home/{}/.local/share/icons/hicolor/256x256/apps/{}.png", user_name, file_image),
+                            format!("/usr/share/pixmaps/{}.png", file_image),
+                            format!("/var/lib/flatpak/exports/share/icons/hicolor/{}/apps/{}.png", size, file_image),
+                            format!("/home/{}/.local/share/flatpak/exports/share/icons/{}/apps/{}.png", user_name, size, file_image),
+                            format!("/home/{}/.local/share/icons/hicolor/{}/apps/{}.png", user_name, size, file_image),
                         ];
+
                         for path in &desktop_file_image_check
                         {
-                            if Path::new(&path).exists()
+                            if Path::new(path).exists()
                             {
                                 file_image = path.to_string();
+                                break 'size_for_loop;
                             };
                         }
-                    }
-                    None => {},
+                    };
                 }
             }
-            files.push( DesktopFile{desktop_file_name: file_name.replace('"', ""), desktop_file_exec: file_exec.replace('"', ""), desktop_file_image: file_image.replace('"', "")} );
+            files.push( DesktopFile{desktop_file_name: name.to_string().replace(".desktop", "").replace('"', ""), desktop_file_exec: file_exec.replace('"', ""), desktop_file_image: file_image.replace('"', "")} );
         }
     }
 
