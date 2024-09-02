@@ -1,4 +1,4 @@
-//use sdl2::image::LoadTexture;
+use sdl2::image::LoadTexture;
 use sdl2::rect::Rect;
 use sdl2::pixels::Color;
 use sdl2::render::{Texture, TextureCreator};
@@ -12,7 +12,7 @@ use crate::
 
 pub const OBJECT_PER_LINE: i32 = 3;
 
-fn create_layout(user_grid_data: Vec<i32>) -> Vec<Vec<i32>>
+pub fn create_layout(user_grid_data: Vec<i32>) -> Vec<Vec<i32>>
 {
         let mut all_objects = Vec::new();
         let mut object_x = user_grid_data[0];
@@ -68,36 +68,40 @@ fn font_generator<'a>(texture_creator: &'a TextureCreator<WindowContext>, additi
 
 
 
-//pub struct Images<'a>
-//{
-//    pub image_vector: Vec<Texture<'a>>,
-//    pub rect_image_vector: Vec<Rect>,
-//}
-//
-//pub fn images(texture_creator: &TextureCreator<WindowContext>) -> Posters
-//{
-//    let mut image_vector = Vec::new();
-//    let mut rect_image_vector = Vec::new();
-//    
-//    if !path_of_images.is_empty()
-//    {
-//        let all_objects = create_layout(vec![75, 75, path_of_images.len() as i32, OBJECT_PER_LINE, 175, 250]);
-//        for (index, path) in path_of_images.iter().enumerate()
-//        {
-//            let rect = Rect::new(all_objects[index][0], unsafe{CAMERA_Y_POSITION + all_objects[index][1]}, 140, 100);
-//            rect_image_vector.push(rect);
-//
-//            let texture = texture_creator.load_texture(path).unwrap();
-//            image_vector.push(texture);
-//        };
-//    };
-//
-//    Images
-//    {
-//        image_vector,
-//        rect_image_vector,
-//    }
-//}   
+pub struct Images<'a>
+{
+    pub image_vector: Vec<Texture<'a>>,
+    pub rect_image_vector: Vec<Rect>,
+}
+
+pub fn images<'a>(all_objects: &Vec<Vec<i32>>, files: &'a Vec<DesktopFile>, texture_creator: &'a TextureCreator<WindowContext>) -> Images<'a>
+{
+    let mut image_vector = Vec::new();
+    let mut rect_image_vector = Vec::new();
+    let mut path_of_images = Vec::new();
+    for file in files 
+    {
+        path_of_images.push(&file.desktop_file_image);
+    };
+    
+    if !path_of_images.is_empty()
+    {
+        for (index, path) in path_of_images.iter().enumerate()
+        {
+            let rect = Rect::new(all_objects[index][0] - 50, unsafe{CAMERA_Y_POSITION + all_objects[index][1] - 100}, 140, 100);
+            rect_image_vector.push(rect);
+
+            let texture = texture_creator.load_texture(path).unwrap();
+            image_vector.push(texture);
+        };
+    };
+
+    Images
+    {
+        image_vector,
+        rect_image_vector,
+    }
+}   
 
 
 
@@ -107,23 +111,17 @@ pub struct Fonts<'a>
     pub ui_rect_vector: Vec<Rect>,
 }
 
-pub fn fonts<'a>(files: &'a Vec<DesktopFile>, texture_creator: &'a TextureCreator<WindowContext>) -> Fonts<'a>
+pub fn fonts<'a>(all_objects: &Vec<Vec<i32>>, files: &'a Vec<DesktopFile>, texture_creator: &'a TextureCreator<WindowContext>) -> Fonts<'a>
 {
     let mut ui_vector = Vec::new();
     let mut ui_rect_vector = Vec::new();
            
     for (index, file) in files.iter().enumerate()
     {
-        let all_objects = create_layout(vec![75, 200, files.len() as i32, OBJECT_PER_LINE, 175, 250]);
-        let (ui_fonts_texture, ui_fonts_rect) = font_generator(texture_creator, None, file.desktop_file_name.clone(), 10, all_objects[index][0], unsafe{CAMERA_Y_POSITION} + all_objects[index][1]);
+        let (ui_fonts_texture, ui_fonts_rect) = font_generator(texture_creator, None, file.desktop_file_name.clone(), 10, all_objects[index][0] - 50, unsafe{CAMERA_Y_POSITION} + all_objects[index][1] + 15);
         ui_vector.push(ui_fonts_texture);
         ui_rect_vector.push(ui_fonts_rect);
     }
 
-
-    Fonts 
-    {
-        ui_vector,
-        ui_rect_vector,
-    }
+    Fonts {ui_vector, ui_rect_vector}
 }
