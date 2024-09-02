@@ -6,22 +6,22 @@ use std::process::Command;
 
 
 
-    // convert strings to bool to suit the struct field
-
 fn convert_bool(vector_of_strings: &[Vec<String>], bounds_take: usize, bounds_skip: usize) -> Vec<bool>
 {
 
     let mut vector_to_return = Vec::new();
     for string_to_convert in vector_of_strings.iter().take(bounds_take).skip(bounds_skip)
     {
-        let converted_bool = if string_to_convert[0] != "false" 
+        let mut converted_bool = false;
+        if string_to_convert[0] == "false"
         {
-            false
+            converted_bool = false;
         } 
-        else
+        else if string_to_convert[0] == "true"
         {
-            true
+            converted_bool = true;
         };
+
         vector_to_return.push(converted_bool);
     };
     vector_to_return
