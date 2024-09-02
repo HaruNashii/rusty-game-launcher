@@ -22,14 +22,14 @@ pub fn create_window(window_size: Vec<u32>) -> (TextureCreator<WindowContext>, C
 
 
 
-pub fn render_scene(current_selected: usize, font_grid_position: &[Vec<i32>], fonts: &Fonts, images: &Images, canvas: &mut Canvas<Window>)
+pub fn render_scene(current_selected: usize, font_grid_position: &[Vec<i32>], fonts: &Fonts, images: &Images, foreground_color: &[u8], background_color: &[u8], canvas: &mut Canvas<Window>)
 {
-    canvas.set_draw_color(Color::RGB(30, 30, 46));
+    canvas.set_draw_color(Color::RGB(background_color[0], background_color[1], background_color[2]));
     canvas.clear();
 
     if !font_grid_position.is_empty()
     {
-        canvas.set_draw_color(Color::RGB(250, 179, 135));
+        canvas.set_draw_color(Color::RGB(foreground_color[0], foreground_color[1], foreground_color[2]));
         canvas.fill_rect(Rect::new(font_grid_position[current_selected][0] - 30, font_grid_position[current_selected][1] - 125, 200, 200)).unwrap();
     }
 

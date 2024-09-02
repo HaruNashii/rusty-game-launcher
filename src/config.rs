@@ -4,19 +4,70 @@ use std::io::{BufReader, BufRead, Write};
 use std::path::Path;
 use std::process::Command;
 
-pub struct ConfigFileData
+
+
+    // convert strings to bool to suit the struct field
+
+fn convert_bool(vector_of_strings: &[Vec<String>], bounds_take: usize, bounds_skip: usize) -> Vec<bool>
 {
-    pub path_to_scan: Vec<String>,
-    pub window_size: Vec<u32>,
-    pub use_gamemode: bool,
-    pub use_gamescope: bool,
-    pub gamescope_flags: String,
-    pub object_per_line: i32,
-    pub text_position: Vec<i32>,
-    pub image_position: Vec<i32>,
-    pub distance_between_texts: Vec<i32>,
-    pub distance_between_images: Vec<i32>,
+
+    let mut vector_to_return = Vec::new();
+    for string_to_convert in vector_of_strings.iter().take(bounds_take).skip(bounds_skip)
+    {
+        let converted_bool = if string_to_convert[0] != "false" 
+        {
+            false
+        } 
+        else
+        {
+            true
+        };
+        vector_to_return.push(converted_bool);
+    };
+    vector_to_return
 }
+
+fn convert_u8(vector_of_strings: &[Vec<String>], bounds_take: usize, bounds_skip: usize) -> Vec<u8>
+{
+    let mut vector_to_return = Vec::new();
+    for string_to_parse in vector_of_strings.iter().take(bounds_take).skip(bounds_skip)
+    {
+        for string in string_to_parse
+        {
+            let converted_number: u8 = string.parse().unwrap();
+            vector_to_return.push(converted_number);
+        }
+    };
+    vector_to_return
+}
+
+fn convert_u32(vector_of_strings: &[Vec<String>]) -> Vec<u32>
+{
+    let mut vector_to_return = Vec::new();
+    for string_to_parse in &vector_of_strings[1]
+    {
+        let converted_number: u32 = string_to_parse.parse().unwrap();
+        vector_to_return.push(converted_number);
+    };
+    vector_to_return
+}
+
+fn convert_i32(vector_of_strings: &[Vec<String>], bounds_take: usize, bounds_skip: usize) -> Vec<i32>
+{
+    let mut vector_to_return = Vec::new();
+    for string_to_parse in vector_of_strings.iter().take(bounds_take).skip(bounds_skip)
+    {
+        for string in string_to_parse
+        {
+            let converted_number: i32 = string.parse().unwrap();
+            vector_to_return.push(converted_number);
+        }
+    };
+    vector_to_return
+}
+
+
+
 
 
 fn get_user_name() -> String
@@ -29,6 +80,9 @@ fn get_user_name() -> String
     let stdout = Command::new(parts.remove(0)).args(parts).output().unwrap_or_else(|_| panic!("Failed to execute command '{}'", command)).stdout;
     String::from_utf8(stdout).expect("Stdout was not valid UTF-8").replace("\n", "")
 }
+
+
+
 
 
 fn verify_if_config_file_exist(config_path: String, full_path_of_config_file: &String, default_values: &Vec<String>)
@@ -47,14 +101,36 @@ fn verify_if_config_file_exist(config_path: String, full_path_of_config_file: &S
     };
 }
 
+
+
+
+
+
+pub struct ConfigFileData
+{
+    pub path_to_scan: Vec<String>,
+    pub window_size: Vec<u32>,
+    pub use_gamemode: bool,
+    pub use_gamescope: bool,
+    pub gamescope_flags: String,
+    pub object_per_line: i32,
+    pub text_position: Vec<i32>,
+    pub image_position: Vec<i32>,
+    pub distance_between_texts: Vec<i32>,
+    pub distance_between_images: Vec<i32>,
+    pub background_color: Vec<u8>,
+    pub foreground_color: Vec<u8>,
+}
+
 pub fn read_config_file() -> ConfigFileData
 {
     let user_name = get_user_name();
-
     let mut all_config_file_data_as_string_vectors = Vec::new();
-    let mut converted_to_i32_config_file_data = Vec::new();
-    let mut converted_to_u32_config_file_data = Vec::new();
-    let mut converted_to_bool_config_file_data = Vec::new();
+    let config_path = format!("/home/{}/.config/rusty-game-launcher", user_name);
+    let config_file_name = "config.i_will_kms";
+    let full_path_of_config_file = format!("{}/{}", config_path, config_file_name);
+
+
     let options = vec!
     [
         "path_to_scan:",
@@ -67,6 +143,8 @@ pub fn read_config_file() -> ConfigFileData
         "image_position:",
         "distance_between_texts:",
         "distance_between_images:",
+        "background_color:",
+        "foreground_color:",
     ];
     //define one default value in case the config file 
     // doesn't have one setted up
@@ -82,23 +160,20 @@ pub fn read_config_file() -> ConfigFileData
         "image_position:25 115".to_string(),
         "distance_between_texts:250 250".to_string(),
         "distance_between_images:250 250".to_string(),
+        "background_color:30 30 40".to_string(),
+        "foreground_color:250 179 135".to_string(),
     ];
 
 
     // verify if the config file exist and if it don't 
     // create the file with a holder config
-    let config_path = format!("/home/{}/.config/rusty-game-launcher", user_name);
-    let config_file_name = "config.i_will_kms";
-    let full_path_of_config_file = format!("{}/{}", config_path, config_file_name);
     verify_if_config_file_exist(config_path, &full_path_of_config_file, &default_values);
-
 
 
     // append all the texts from the config file to one vectors of strings
     let file = File::open(&full_path_of_config_file ).unwrap();
     let file_content = BufReader::new(file);
     let lines = file_content.lines();
-
     for line in lines
     {
         let line_content = line.unwrap();
@@ -121,36 +196,13 @@ pub fn read_config_file() -> ConfigFileData
         }
     }
 
-    // convert strings to i32 to suit the struct field
-    let converted_to_i32_number_config_file_data: i32 = all_config_file_data_as_string_vectors[5][0].parse().unwrap();
 
-    // convert strings to a vector of i32 to suit the struct field
-    for string_to_parse in all_config_file_data_as_string_vectors.iter().skip(5)
-    {
-        for string in string_to_parse
-        {
-            let converted_number: i32 = string.parse().unwrap();
-            converted_to_i32_config_file_data.push(converted_number);
-        }
-    };
-    
+    let i32_number_config_file_data: i32 = all_config_file_data_as_string_vectors[5][0].parse().unwrap();
+    let u8_vector_config_file_data = convert_u8(&all_config_file_data_as_string_vectors, 12, 10);
+    let u32_vector_config_file_data = convert_u32(&all_config_file_data_as_string_vectors);
+    let i32_vector_config_file_data = convert_i32(&all_config_file_data_as_string_vectors, 10, 6);
+    let bool_vector_config_file_data = convert_bool(&all_config_file_data_as_string_vectors, 4, 2);
 
-    // convert strings to u32 to suit the struct field
-    for string_to_parse in &all_config_file_data_as_string_vectors[1]
-    {
-        let converted_number: u32 = string_to_parse.parse().unwrap();
-        converted_to_u32_config_file_data.push(converted_number);
-    };
-
-
-    // convert strings to bool to suit the struct field
-    for string_to_convert in all_config_file_data_as_string_vectors.iter().take(4).skip(2)
-    {
-        let mut converted_bool = false;
-        if string_to_convert[0] == "false" {converted_bool = false};
-        if string_to_convert[0] == "true" {converted_bool = true};
-        converted_to_bool_config_file_data.push(converted_bool);
-    };
 
 
     // verify if the directory informed in the config file exists 
@@ -163,18 +215,19 @@ pub fn read_config_file() -> ConfigFileData
         };
     };
 
-
     ConfigFileData
     {
         path_to_scan:  all_config_file_data_as_string_vectors[0].clone(),
-        window_size: converted_to_u32_config_file_data,
-        use_gamemode: converted_to_bool_config_file_data[0],
-        use_gamescope: converted_to_bool_config_file_data[1],
+        window_size: u32_vector_config_file_data,
+        use_gamemode: bool_vector_config_file_data[0],
+        use_gamescope: bool_vector_config_file_data[1],
         gamescope_flags:  all_config_file_data_as_string_vectors[4][0].clone(),
-        object_per_line: converted_to_i32_number_config_file_data,
-        text_position: vec![converted_to_i32_config_file_data[0], converted_to_i32_config_file_data[1]],
-        image_position: vec![converted_to_i32_config_file_data[2], converted_to_i32_config_file_data[3]],
-        distance_between_texts: vec![converted_to_i32_config_file_data[4], converted_to_i32_config_file_data[5]],
-        distance_between_images: vec![converted_to_i32_config_file_data[6], converted_to_i32_config_file_data[7]],
+        object_per_line: i32_number_config_file_data,
+        text_position: vec![i32_vector_config_file_data[0], i32_vector_config_file_data[1]],
+        image_position: vec![i32_vector_config_file_data[2], i32_vector_config_file_data[3]],
+        distance_between_texts: vec![i32_vector_config_file_data[4], i32_vector_config_file_data[5]],
+        distance_between_images: vec![i32_vector_config_file_data[6], i32_vector_config_file_data[7]],
+        background_color: vec![u8_vector_config_file_data[0], u8_vector_config_file_data[1], u8_vector_config_file_data[2]],
+        foreground_color: vec![u8_vector_config_file_data[3], u8_vector_config_file_data[4], u8_vector_config_file_data[5]],
     }
 }

@@ -64,7 +64,7 @@ pub fn read_desktop_files(received_path: Vec<String>) -> Vec<DesktopFile>
             for line in file_content.lines() 
             {
                 let line_content = line.unwrap();
-                if line_content.contains("Exec=") { file_exec = line_content.replace("Exec=", ""); }
+                if line_content.contains("Exec=") { file_exec = line_content.replace("Exec=", ""); continue; }
                 if line_content.contains("Icon=")
                 {
                     file_image = line_content.replace("Icon=", "");

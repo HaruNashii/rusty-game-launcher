@@ -46,6 +46,6 @@ fn main()
 
             exec_app(app_flag, &config_file_data.gamescope_flags, &files[selected_option].desktop_file_exec);
         };
-        render_scene(selected_option, &fonts_objects, &fonts, &images, &mut canvas);
+        render_scene(selected_option, &fonts_objects, &fonts, &images, &config_file_data.foreground_color, &config_file_data.background_color, &mut canvas);
     }
 }
