@@ -10,7 +10,7 @@ use crate::
     read::DesktopFile,
 };
 
-pub fn create_layout(user_grid_data: Vec<i32>, gride_type: usize) -> Vec<Vec<i32>>
+pub fn create_layout(user_grid_data: Vec<i32>, gride_type: i32) -> Vec<Vec<i32>>
 {
         let mut all_objects = Vec::new();
         let mut object_x = user_grid_data[0];

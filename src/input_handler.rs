@@ -5,8 +5,10 @@ use std::process::exit;
 
 use crate::window::{CAMERA_Y_POSITION, CAMERA_X_POSITION};
 
-pub fn handle_input(start_position_x: i32, start_position_y: i32, window_width: u32, window_height: u32, gride_type: usize, mut selected_option: usize, all_objects: &[Vec<i32>], object_per_line: i32, amount_limit: usize, event_pump: &mut sdl2::EventPump) -> (bool, usize)
+pub fn handle_input(start_position: &[i32], window_size: &[u32], gride_data: (i32, &Vec<Vec<i32>>), mut selected_option: usize, object_per_line: i32, amount_limit: usize, event_pump: &mut sdl2::EventPump) -> (bool, usize)
 {
+    let gride_type = gride_data.0;
+    let all_objects = gride_data.1;
     let first_object_position_x = unsafe{CAMERA_X_POSITION + all_objects[0][0]};
     let last_object_position_x = unsafe{CAMERA_X_POSITION + all_objects.last().unwrap()[0]};
 
@@ -14,11 +16,11 @@ pub fn handle_input(start_position_x: i32, start_position_y: i32, window_width: 
     let last_object_position_y = unsafe{CAMERA_Y_POSITION +all_objects.last().unwrap()[1]};
     unsafe 
     {
-        if first_object_position_x > (start_position_x + 25) { CAMERA_X_POSITION -= 20; };
-        if last_object_position_x < (window_width - 250) as i32 { CAMERA_X_POSITION += 20; };
+        if first_object_position_x > (start_position[0] + 25) { CAMERA_X_POSITION -= 20; };
+        if last_object_position_x < (window_size[0] - 250) as i32 { CAMERA_X_POSITION += 20; };
 
-        if first_object_position_y > (start_position_y + 100) { CAMERA_Y_POSITION -= 15; };
-        if last_object_position_y < (window_height - 100) as i32 { CAMERA_Y_POSITION += 15; };
+        if first_object_position_y > (start_position[1] + 100) { CAMERA_Y_POSITION -= 15; };
+        if last_object_position_y < (window_size[1] - 100) as i32 { CAMERA_Y_POSITION += 15; };
     }
 
     for event in event_pump.poll_iter() 
@@ -42,7 +44,7 @@ pub fn handle_input(start_position_x: i32, start_position_y: i32, window_width: 
                     }
                     2 =>
                     {
-                        if (selected_option as i32) - 1 != -1 as i32
+                        if (selected_option as i32) - 1 != -1_i32
                         {
                             if selected_option as i32 % object_per_line == 0
                             {
@@ -129,7 +131,7 @@ pub fn handle_input(start_position_x: i32, start_position_y: i32, window_width: 
                     }
                     2 =>
                     {
-                        if selected_option as usize >= object_per_line as usize
+                        if selected_option >= object_per_line as usize
                         {
                             unsafe{CAMERA_X_POSITION += 175};   
                             selected_option -= object_per_line as usize;
