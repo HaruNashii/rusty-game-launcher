@@ -30,7 +30,7 @@ pub fn create_layout(user_grid_data: Vec<i32>, gride_type: i32) -> Vec<Vec<i32>>
                     }
                     else 
                     {
-                        object_x += user_grid_data[5];
+                        object_x += user_grid_data[4];
                     }
 
                     all_objects.push(object);
@@ -48,7 +48,7 @@ pub fn create_layout(user_grid_data: Vec<i32>, gride_type: i32) -> Vec<Vec<i32>>
                     }
                     else 
                     {
-                        object_y += user_grid_data[4];
+                        object_y += user_grid_data[5];
                     }
                     all_objects.push(object);
                 }

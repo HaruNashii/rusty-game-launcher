@@ -16,11 +16,11 @@ pub fn handle_input(start_position: &[i32], window_size: &[u32], gride_data: (i3
     let last_object_position_y = unsafe{CAMERA_Y_POSITION +all_objects.last().unwrap()[1]};
     unsafe 
     {
-        if first_object_position_x > (start_position[0] + 25) { CAMERA_X_POSITION -= 20; };
-        if last_object_position_x < (window_size[0] - 250) as i32 { CAMERA_X_POSITION += 20; };
+        if gride_type == 1 && first_object_position_y > (start_position[1]) { CAMERA_Y_POSITION -= 20; };
+        if gride_type == 1 && last_object_position_y < (window_size[1] - 100) as i32 { CAMERA_Y_POSITION += 20; };
 
-        if first_object_position_y > (start_position[1] + 100) { CAMERA_Y_POSITION -= 15; };
-        if last_object_position_y < (window_size[1] - 100) as i32 { CAMERA_Y_POSITION += 15; };
+        if gride_type == 2 && first_object_position_x > (start_position[0]) { CAMERA_X_POSITION -= 20; };
+        if gride_type == 2 && last_object_position_x < (window_size[0] - 250) as i32 { CAMERA_X_POSITION += 20; };
     }
 
     for event in event_pump.poll_iter() 

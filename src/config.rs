@@ -50,6 +50,7 @@ pub struct ConfigFileData
     pub use_gamemode: bool,
     pub use_gamescope: bool,
     pub gamescope_flags: String,
+    pub gride_type: i32,
     pub object_per_line: i32,
     pub text_position: Vec<i32>,
     pub image_position: Vec<i32>,
@@ -75,6 +76,7 @@ pub fn read_config_file() -> ConfigFileData
         "use_gamemode:",
         "use_gamescope:",
         "gamescope_flags:",
+        "gride_type:",
         "object_per_line:",
         "text_position:",
         "image_position:",
@@ -92,11 +94,12 @@ pub fn read_config_file() -> ConfigFileData
         "use_gamemode:true".to_string(),
         "use_gamescope:false".to_string(),
         "gamescope_flags:--fullscreen".to_string(),
+        "gride_type:1".to_string(),
         "object_per_line:3".to_string(),
         "text_position:78 185".to_string(),
         "image_position:75 70".to_string(),
-        "distance_between_texts:200 250".to_string(),
-        "distance_between_images:200 250".to_string(),
+        "distance_between_texts:250 200".to_string(),
+        "distance_between_images:250 200".to_string(),
         "background_color:30 30 40".to_string(),
         "foreground_color:250 179 135".to_string(),
     ];
@@ -113,7 +116,6 @@ pub fn read_config_file() -> ConfigFileData
     let mut u8_vector_config_file_data = Vec::new();
     let mut bool_vector_config_file_data = Vec::new();
     let mut string_config_file_data = String::new();
-    let mut i32_config_file_data: i32 = 0;
     let mut i32_vector_config_file_data = Vec::new();
     let file = File::open(&full_path_of_config_file ).unwrap();
     let file_content = BufReader::new(file);
@@ -166,18 +168,14 @@ pub fn read_config_file() -> ConfigFileData
                             string_config_file_data.push_str(&format!("{} ", arg))
                         }
                     } 
-                    else if option.contains(options[5])
-                    {
-                        i32_config_file_data = holder[0].parse::<i32>().unwrap();
-                    } 
-                    else if option.contains(options[6]) || option.contains(options[7]) || option.contains(options[8]) || option.contains(options[9])
+                    else if option.contains(options[5]) || option.contains(options[6]) || option.contains(options[7]) || option.contains(options[8]) || option.contains(options[9]) || option.contains(options[10])
                     {
                         for arg in &holder
                         {
                             i32_vector_config_file_data.push(arg.parse::<i32>().unwrap());
                         }
                     }
-                    else if option.contains(options[10]) || option.contains(options[11])
+                    else if option.contains(options[11]) || option.contains(options[12])
                     {
                         for arg in &holder 
                         {
@@ -191,8 +189,6 @@ pub fn read_config_file() -> ConfigFileData
             }
         }
     }
-
-
 
 
 
@@ -222,11 +218,12 @@ pub fn read_config_file() -> ConfigFileData
         use_gamemode: bool_vector_config_file_data[0],
         use_gamescope: bool_vector_config_file_data[1],
         gamescope_flags: string_config_file_data,
-        object_per_line: i32_config_file_data,
-        text_position: vec![i32_vector_config_file_data[0], i32_vector_config_file_data[1]],
-        image_position: vec![i32_vector_config_file_data[2], i32_vector_config_file_data[3]],
-        distance_between_texts: vec![i32_vector_config_file_data[4], i32_vector_config_file_data[5]],
-        distance_between_images: vec![i32_vector_config_file_data[6], i32_vector_config_file_data[7]],
+        gride_type: i32_vector_config_file_data[0],
+        object_per_line: i32_vector_config_file_data[1],
+        text_position: vec![i32_vector_config_file_data[2], i32_vector_config_file_data[3]],
+        image_position: vec![i32_vector_config_file_data[4], i32_vector_config_file_data[5]],
+        distance_between_texts: vec![i32_vector_config_file_data[6], i32_vector_config_file_data[7]],
+        distance_between_images: vec![i32_vector_config_file_data[8], i32_vector_config_file_data[9]],
         background_color: vec![u8_vector_config_file_data[0], u8_vector_config_file_data[1], u8_vector_config_file_data[2]],
         foreground_color: vec![u8_vector_config_file_data[3], u8_vector_config_file_data[4], u8_vector_config_file_data[5]],
     }
