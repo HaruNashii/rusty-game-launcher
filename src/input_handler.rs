@@ -5,10 +5,8 @@ use std::process::exit;
 
 use crate::window::CAMERA_Y_POSITION;
 
-pub fn handle_input(mut selected_option: usize, all_objects: &[Vec<i32>], amount_limit: usize, event_pump: &mut sdl2::EventPump) -> (bool, usize)
+pub fn handle_input(screen_height: i32, mut selected_option: usize, all_objects: &[Vec<i32>], amount_limit: usize, event_pump: &mut sdl2::EventPump) -> (bool, usize)
 {
-    unsafe{ CAMERA_Y_POSITION = 0; };
-
     for event in event_pump.poll_iter() 
     {
         match event 
@@ -48,7 +46,7 @@ pub fn handle_input(mut selected_option: usize, all_objects: &[Vec<i32>], amount
                 for (index, object) in all_objects.iter().enumerate()
                 {
                     if x >= object[0] - 50 && x <= object[0] + 100 
-                    && y >= object[1] - 100 && y <= object[1] + 200
+                    && y >= unsafe{CAMERA_Y_POSITION + object[1] - 100} && y <= unsafe{CAMERA_Y_POSITION + object[1] + 200}
                     {
                         selected_option = index;
                     };
@@ -70,7 +68,7 @@ pub fn handle_input(mut selected_option: usize, all_objects: &[Vec<i32>], amount
                         CAMERA_Y_POSITION += 20;
                     };
 
-                    if y == 1 && all_objects.last().unwrap()[1] > 400
+                    if y == 1 && CAMERA_Y_POSITION + all_objects.last().unwrap()[1] > (screen_height - 100)
                     {
                         CAMERA_Y_POSITION -= 20;
                     };

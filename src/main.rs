@@ -27,7 +27,7 @@ fn main()
 
     let mut selected_option = 0;
 
-    let (texture_creator, mut canvas, mut event_pump) = create_window(config_file_data.window_size); 
+    let (texture_creator, mut canvas, mut event_pump) = create_window(&config_file_data.window_size); 
     
     loop 
     {
@@ -35,7 +35,7 @@ fn main()
 
         let images = images(&images_objects, &files, &texture_creator);
         let fonts = fonts(&fonts_objects, &files, &texture_creator);
-        let (clicked, option_returned) = handle_input(selected_option, &fonts_objects, fonts.ui_rect_vector.len(), &mut event_pump);
+        let (clicked, option_returned) = handle_input(config_file_data.window_size[1] as i32, selected_option, &fonts_objects, fonts.ui_rect_vector.len(), &mut event_pump);
         selected_option = option_returned;
         if clicked
         {

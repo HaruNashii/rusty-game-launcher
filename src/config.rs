@@ -6,69 +6,6 @@ use std::process::Command;
 
 
 
-fn convert_bool(vector_of_strings: &[Vec<String>], bounds_take: usize, bounds_skip: usize) -> Vec<bool>
-{
-
-    let mut vector_to_return = Vec::new();
-    for string_to_convert in vector_of_strings.iter().take(bounds_take).skip(bounds_skip)
-    {
-        let mut converted_bool = false;
-        if string_to_convert[0] == "false"
-        {
-            converted_bool = false;
-        } 
-        else if string_to_convert[0] == "true"
-        {
-            converted_bool = true;
-        };
-
-        vector_to_return.push(converted_bool);
-    };
-    vector_to_return
-}
-
-fn convert_u8(vector_of_strings: &[Vec<String>], bounds_take: usize, bounds_skip: usize) -> Vec<u8>
-{
-    let mut vector_to_return = Vec::new();
-    for string_to_parse in vector_of_strings.iter().take(bounds_take).skip(bounds_skip)
-    {
-        for string in string_to_parse
-        {
-            let converted_number: u8 = string.parse().unwrap();
-            vector_to_return.push(converted_number);
-        }
-    };
-    vector_to_return
-}
-
-fn convert_u32(vector_of_strings: &[Vec<String>]) -> Vec<u32>
-{
-    let mut vector_to_return = Vec::new();
-    for string_to_parse in &vector_of_strings[1]
-    {
-        let converted_number: u32 = string_to_parse.parse().unwrap();
-        vector_to_return.push(converted_number);
-    };
-    vector_to_return
-}
-
-fn convert_i32(vector_of_strings: &[Vec<String>], bounds_take: usize, bounds_skip: usize) -> Vec<i32>
-{
-    let mut vector_to_return = Vec::new();
-    for string_to_parse in vector_of_strings.iter().take(bounds_take).skip(bounds_skip)
-    {
-        for string in string_to_parse
-        {
-            let converted_number: i32 = string.parse().unwrap();
-            vector_to_return.push(converted_number);
-        }
-    };
-    vector_to_return
-}
-
-
-
-
 
 fn get_user_name() -> String
 {
@@ -171,6 +108,13 @@ pub fn read_config_file() -> ConfigFileData
 
 
     // append all the texts from the config file to one vectors of strings
+    let mut string_vector_config_file_data = Vec::new();
+    let mut u32_vector_config_file_data = Vec::new();
+    let mut u8_vector_config_file_data = Vec::new();
+    let mut bool_vector_config_file_data = Vec::new();
+    let mut string_config_file_data = String::new();
+    let mut i32_config_file_data: i32 = 0;
+    let mut i32_vector_config_file_data = Vec::new();
     let file = File::open(&full_path_of_config_file ).unwrap();
     let file_content = BufReader::new(file);
     let lines = file_content.lines();
@@ -189,6 +133,61 @@ pub fn read_config_file() -> ConfigFileData
                     {
                         holder.push(" ".to_string());
                     }
+                    else 
+                    {
+                        if option.contains(options[0])
+                        {
+                            for arg in &holder 
+                            {
+                                string_vector_config_file_data.push(arg.to_owned());
+                            }
+                        } 
+                        else if option.contains(options[1])
+                        {
+                            for arg in &holder 
+                            {
+                                u32_vector_config_file_data.push(arg.parse::<u32>().unwrap());
+                            }
+                        }
+                        else if option.contains(options[2]) || option.contains(options[3])
+                        {
+                            for arg in &holder 
+                            {
+                                let mut converted_bool = false;
+                                if arg == "true"
+                                {
+                                    converted_bool = true;
+                                };
+                                bool_vector_config_file_data.push(converted_bool);
+                            }
+                        } 
+                        else if option.contains(options[4])
+                        {
+                            for arg in &holder
+                            {
+                                string_config_file_data.push_str(&format!("{} ", arg))
+                            }
+                        } 
+                        else if option.contains(options[5])
+                        {
+                            i32_config_file_data = holder[0].parse::<i32>().unwrap();
+                        } 
+                        else if option.contains(options[6]) || option.contains(options[7]) || option.contains(options[8]) || option.contains(options[9])
+                        {
+                            for arg in &holder
+                            {
+                                i32_vector_config_file_data.push(arg.parse::<i32>().unwrap());
+                            }
+                        }
+                        else if option.contains(options[10]) || option.contains(options[11])
+                        {
+                            for arg in &holder 
+                            {
+                                u8_vector_config_file_data.push(arg.parse::<u8>().unwrap());
+                            }
+                        }
+                    }
+
                     all_config_file_data_as_string_vectors.push(holder);
                 },
                 None => continue,
@@ -197,11 +196,6 @@ pub fn read_config_file() -> ConfigFileData
     }
 
 
-    let i32_number_config_file_data: i32 = all_config_file_data_as_string_vectors[5][0].parse().unwrap();
-    let u8_vector_config_file_data = convert_u8(&all_config_file_data_as_string_vectors, 12, 10);
-    let u32_vector_config_file_data = convert_u32(&all_config_file_data_as_string_vectors);
-    let i32_vector_config_file_data = convert_i32(&all_config_file_data_as_string_vectors, 10, 6);
-    let bool_vector_config_file_data = convert_bool(&all_config_file_data_as_string_vectors, 4, 2);
 
 
 
@@ -226,12 +220,12 @@ pub fn read_config_file() -> ConfigFileData
 
     ConfigFileData
     {
-        path_to_scan:  all_config_file_data_as_string_vectors[0].clone(),
+        path_to_scan: string_vector_config_file_data,
         window_size: u32_vector_config_file_data,
         use_gamemode: bool_vector_config_file_data[0],
         use_gamescope: bool_vector_config_file_data[1],
-        gamescope_flags:  all_config_file_data_as_string_vectors[4][0].clone(),
-        object_per_line: i32_number_config_file_data,
+        gamescope_flags: string_config_file_data,
+        object_per_line: i32_config_file_data,
         text_position: vec![i32_vector_config_file_data[0], i32_vector_config_file_data[1]],
         image_position: vec![i32_vector_config_file_data[2], i32_vector_config_file_data[3]],
         distance_between_texts: vec![i32_vector_config_file_data[4], i32_vector_config_file_data[5]],

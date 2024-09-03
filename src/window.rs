@@ -7,7 +7,7 @@ use crate::ui::{Fonts, Images};
 
 pub static mut CAMERA_Y_POSITION: i32 = 0;
 
-pub fn create_window(window_size: Vec<u32>) -> (TextureCreator<WindowContext>, Canvas<Window>, sdl2::EventPump)
+pub fn create_window(window_size: &[u32]) -> (TextureCreator<WindowContext>, Canvas<Window>, sdl2::EventPump)
 {
     let sdl_started = sdl2::init().unwrap();
     let video_system = sdl_started.video().unwrap();
@@ -30,7 +30,7 @@ pub fn render_scene(current_selected: usize, font_grid_position: &[Vec<i32>], fo
     if !font_grid_position.is_empty()
     {
         canvas.set_draw_color(Color::RGB(foreground_color[0], foreground_color[1], foreground_color[2]));
-        canvas.fill_rect(Rect::new(font_grid_position[current_selected][0] - 30, font_grid_position[current_selected][1] - 125, 200, 200)).unwrap();
+        canvas.fill_rect(Rect::new(font_grid_position[current_selected][0] - 30, unsafe{CAMERA_Y_POSITION + font_grid_position[current_selected][1] - 125}, 200, 200)).unwrap();
     }
 
     if !fonts.ui_vector.is_empty()
