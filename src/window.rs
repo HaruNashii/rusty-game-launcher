@@ -1,11 +1,11 @@
 use sdl2::pixels::Color;
-use sdl2::rect::Rect;
 use sdl2::render::{Canvas, TextureCreator};
 use sdl2::video::{Window, WindowContext};
 
 use crate::ui::{Fonts, Images};
 
 pub static mut CAMERA_Y_POSITION: i32 = 0;
+pub static mut CAMERA_X_POSITION: i32 = 0;
 
 pub fn create_window(window_size: &[u32]) -> (TextureCreator<WindowContext>, Canvas<Window>, sdl2::EventPump)
 {
@@ -22,15 +22,15 @@ pub fn create_window(window_size: &[u32]) -> (TextureCreator<WindowContext>, Can
 
 
 
-pub fn render_scene(current_selected: usize, font_grid_position: &[Vec<i32>], fonts: &Fonts, images: &Images, foreground_color: &[u8], background_color: &[u8], canvas: &mut Canvas<Window>)
+pub fn render_scene(current_selected: usize, fonts: &Fonts, images: &Images, foreground_color: &[u8], background_color: &[u8], canvas: &mut Canvas<Window>)
 {
     canvas.set_draw_color(Color::RGB(background_color[0], background_color[1], background_color[2]));
     canvas.clear();
 
-    if !font_grid_position.is_empty()
+    if !images.rect_image_selection_vector.is_empty()
     {
         canvas.set_draw_color(Color::RGB(foreground_color[0], foreground_color[1], foreground_color[2]));
-        canvas.fill_rect(Rect::new(font_grid_position[current_selected][0] - 30, unsafe{CAMERA_Y_POSITION + font_grid_position[current_selected][1] - 125}, 200, 200)).unwrap();
+        canvas.fill_rect(images.rect_image_selection_vector[current_selected]).unwrap();
     }
 
     if !fonts.ui_vector.is_empty()

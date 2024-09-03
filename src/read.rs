@@ -39,7 +39,9 @@ pub fn read_desktop_files(received_path: Vec<String>) -> Vec<DesktopFile>
         // check if the file has the Game category
         for name in &file_names
         {
-            if name.to_string().contains("steam.desktop") { continue };
+            let file_name_string = name.to_string();
+            if file_name_string.contains("steam.desktop") { continue; };
+            if !file_name_string.contains(".desktop") { continue; };
             
             let file = File::open( format!("{}/{}", path_to_read, name) ).unwrap();
             let file_content = BufReader::new(&file);
@@ -51,8 +53,6 @@ pub fn read_desktop_files(received_path: Vec<String>) -> Vec<DesktopFile>
             }
         }
 
-        // check if the file has the exec argument
-        // if YES return the exec argument line and the file name
         let mut file_exec = String::new();
         let mut file_image = String::new();
         let mut file_name = String::new();
@@ -69,16 +69,17 @@ pub fn read_desktop_files(received_path: Vec<String>) -> Vec<DesktopFile>
                 if line_content.contains("Icon=")
                 {
                     file_image = line_content.replace("Icon=", "");
-
-                    let size_of_image = vec!["512x512", "256x256", "128x128", "64x64", "48x48", "32x32", "24x24", "16x16"];
+                    let size_of_image = vec!["512x512", "384x384", "256x256", "192x192", "128x128", "96x96", "72x72", "64x64", "48x48", "36x36", "32x32", "24x24", "22x22", "16x16"];
                     'size_for_loop: for size in size_of_image
                     {
                         let desktop_file_image_check = vec!
                         [
-                            format!("/usr/share/pixmaps/{}.png", file_image),
                             format!("/var/lib/flatpak/exports/share/icons/hicolor/{}/apps/{}.png", size, file_image),
                             format!("/home/{}/.local/share/flatpak/exports/share/icons/{}/apps/{}.png", user_name, size, file_image),
                             format!("/home/{}/.local/share/icons/hicolor/{}/apps/{}.png", user_name, size, file_image),
+                            format!("/usr/share/icons/{}.png", file_image),
+                            format!("/usr/share/icons/Adwaita/{}.png", file_image),
+                            format!("/usr/share/pixmaps/{}.png", file_image),
                         ];
 
                         for path in &desktop_file_image_check

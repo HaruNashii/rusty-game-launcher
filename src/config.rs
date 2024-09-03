@@ -95,8 +95,8 @@ pub fn read_config_file() -> ConfigFileData
         "object_per_line:3".to_string(),
         "text_position:78 185".to_string(),
         "image_position:75 70".to_string(),
-        "distance_between_texts:250 250".to_string(),
-        "distance_between_images:250 250".to_string(),
+        "distance_between_texts:200 250".to_string(),
+        "distance_between_images:200 250".to_string(),
         "background_color:30 30 40".to_string(),
         "foreground_color:250 179 135".to_string(),
     ];
