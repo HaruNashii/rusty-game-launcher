@@ -133,58 +133,55 @@ pub fn read_config_file() -> ConfigFileData
                     {
                         holder.push(" ".to_string());
                     }
-                    else 
+                    else if option.contains(options[0])
                     {
-                        if option.contains(options[0])
+                        for arg in &holder 
                         {
-                            for arg in &holder 
-                            {
-                                string_vector_config_file_data.push(arg.to_owned());
-                            }
-                        } 
-                        else if option.contains(options[1])
-                        {
-                            for arg in &holder 
-                            {
-                                u32_vector_config_file_data.push(arg.parse::<u32>().unwrap());
-                            }
+                            string_vector_config_file_data.push(arg.to_owned());
                         }
-                        else if option.contains(options[2]) || option.contains(options[3])
+                    } 
+                    else if option.contains(options[1])
+                    {
+                        for arg in &holder 
                         {
-                            for arg in &holder 
-                            {
-                                let mut converted_bool = false;
-                                if arg == "true"
-                                {
-                                    converted_bool = true;
-                                };
-                                bool_vector_config_file_data.push(converted_bool);
-                            }
-                        } 
-                        else if option.contains(options[4])
-                        {
-                            for arg in &holder
-                            {
-                                string_config_file_data.push_str(&format!("{} ", arg))
-                            }
-                        } 
-                        else if option.contains(options[5])
-                        {
-                            i32_config_file_data = holder[0].parse::<i32>().unwrap();
-                        } 
-                        else if option.contains(options[6]) || option.contains(options[7]) || option.contains(options[8]) || option.contains(options[9])
-                        {
-                            for arg in &holder
-                            {
-                                i32_vector_config_file_data.push(arg.parse::<i32>().unwrap());
-                            }
+                            u32_vector_config_file_data.push(arg.parse::<u32>().unwrap());
                         }
-                        else if option.contains(options[10]) || option.contains(options[11])
+                    }
+                    else if option.contains(options[2]) || option.contains(options[3])
+                    {
+                        for arg in &holder 
                         {
-                            for arg in &holder 
+                            let mut converted_bool = false;
+                            if arg == "true"
                             {
-                                u8_vector_config_file_data.push(arg.parse::<u8>().unwrap());
-                            }
+                                converted_bool = true;
+                            };
+                            bool_vector_config_file_data.push(converted_bool);
+                        }
+                    } 
+                    else if option.contains(options[4])
+                    {
+                        for arg in &holder
+                        {
+                            string_config_file_data.push_str(&format!("{} ", arg))
+                        }
+                    } 
+                    else if option.contains(options[5])
+                    {
+                        i32_config_file_data = holder[0].parse::<i32>().unwrap();
+                    } 
+                    else if option.contains(options[6]) || option.contains(options[7]) || option.contains(options[8]) || option.contains(options[9])
+                    {
+                        for arg in &holder
+                        {
+                            i32_vector_config_file_data.push(arg.parse::<i32>().unwrap());
+                        }
+                    }
+                    else if option.contains(options[10]) || option.contains(options[11])
+                    {
+                        for arg in &holder 
+                        {
+                            u8_vector_config_file_data.push(arg.parse::<u8>().unwrap());
                         }
                     }
 
